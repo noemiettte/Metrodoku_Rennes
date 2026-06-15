@@ -1,10 +1,6 @@
 
 const categories=Object.keys(STATIONS[0].props);
 
-let errorCount=0;
-const MAX_ERRORS=3;
-let gameOver=false;
-
 function seededRandom(seed){let x=Math.sin(seed)*10000;return x-Math.floor(x);}
 
 function shuffle(arr,seed){
@@ -106,7 +102,6 @@ function create(seed){
         class="station-input"
         data-r="${r}"
         data-c="${c}"
-        data-error-counted="false"
         autocomplete="off"
       >
       <div class="suggestions"></div>
@@ -122,44 +117,40 @@ function create(seed){
  setupAutocomplete();
 }
 
-function triggerGameOver() {
-  gameOver = true;
-  alert("3 erreurs atteintes !");
-}
-function validateInput(input){
- if(gameOver) return;
- const name=input.value.trim().toLowerCase();
- if (name===""){
-  input.className="";
-  input.dataset.errorCounted="false";
-  return;
- }
- const station=STATIONS.find(s=>s.name.toLowerCase()===name)
- const ok =
-  station &&
-  station.props[input.dataset.r] &&
-  station.props[input.dataset.c] &&
-  Array.from(document.querySelectorAll("input"))
-   .filter(i=>i!==input)
-   .every(i=>i.value.trim().toLowerCase()!==name);
- if (ok){
-  input.className="ok";
-  input.dataset.errorCounted="false";
- } else{
-  input.className="bad";
-  if (input.dataset.errorCounted !== "true") {
-      errorCount++;
-      input.dataset.errorCounted = "true";
-      updateErrorsUI();
-  }
- }
- if (errorCount >= MAX_ERRORS) {
-    triggerGameOver();
- }
+function check(){
+ let valid=0,total=0;
+ const used=new Set();
+
+ document.querySelectorAll('input').forEach(i=>{
+   total++;
+
+   const name=i.value.trim().toLowerCase();
+
+   const station=STATIONS.find(
+     s=>s.name.toLowerCase()===name
+   );
+
+   const ok=station &&
+            !used.has(name) &&
+            station.props[i.dataset.r] &&
+            station.props[i.dataset.c];
+
+   if(ok){
+     used.add(name);
+     i.className='ok';
+     valid++;
+   }else{
+     i.className='bad';
+   }
+ });
+
+ document.getElementById('result').textContent =
+   `${valid}/${total} cases correctes`;
 }
 
 document.getElementById('dailyBtn').onclick=()=>create(dailySeed());
 document.getElementById('randomBtn').onclick=()=>create(Date.now());
+document.getElementById('checkBtn').onclick=check;
 
 document.getElementById('shareBtn').onclick=()=>{
  navigator.clipboard.writeText('Je joue à Metrodoku Rennes !');
