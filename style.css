@@ -2,7 +2,7 @@
 body{font-family:system-ui,sans-serif;background:#f5f5f5;margin:0}
 .container{max-width:1100px;margin:auto;padding:20px}
 table{border-collapse:separate;border-spacing:12px;background:transparent}
-th{width:120px;height:80px;border-radius:16px;background:#c0a3e8;color:black;border:none;front-size:14px;front-weight:600}
+th{width:120px;height:80px;border-radius:16px;background:#5c2d91;color:white;border:none;front-size:14px;front-weight:600}
 td{width:120px;height:120px;padding:0;border:none}
 input{width:100%;box-sizing:border-box;padding:8px}
 .ok{background:#d4edda}.bad{background:#f8d7da}
