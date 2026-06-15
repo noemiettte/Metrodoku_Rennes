@@ -106,6 +106,7 @@ function create(seed){
         class="station-input"
         data-r="${r}"
         data-c="${c}"
+        data-error-counted="false"
         autocomplete="off"
       >
       <div class="suggestions"></div>
@@ -136,7 +137,7 @@ function validateInput(input){
   station.props[input.dataset.c] &&
   Array.from(document.querySelectorAll("input"))
    .filter(i=>i!==input)
-   .every(i=>i.value.trim(toLowerCase()!==name);
+   .every(i=>i.value.trim().toLowerCase()!==name));
  if (ok){
   input.className="ok";
   input.dataset.errorCounted="false";
@@ -151,10 +152,6 @@ function validateInput(input){
  if (errorCount >= MAX_ERRORS) {
     triggerGameOver();
  }
-}
-
- document.getElementById('result').textContent =
-   `${valid}/${total} cases correctes`;
 }
 
 document.getElementById('dailyBtn').onclick=()=>create(dailySeed());
