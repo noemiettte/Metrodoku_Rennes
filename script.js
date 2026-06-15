@@ -125,6 +125,80 @@ function generateValidGrid(seed) {
   );
 }
 
+// --- Autocomplétion ---
+
+function normalize(str) {
+  return str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+}
+
+function getSuggestions(value) {
+
+  const normValue = normalize(value.trim());
+
+  if (normValue.length < 3) {
+    return [];
+  }
+
+  return STATIONS
+    .filter(station => normalize(station.name).includes(normValue))
+    .slice(0, 8);
+}
+
+function setupAutocomplete(input) {
+
+  const wrapper = input.parentElement;
+  const list = wrapper.querySelector('.suggestions');
+
+  input.addEventListener('input', () => {
+
+    if (gameOver || input.disabled) {
+      return;
+    }
+
+    const matches = getSuggestions(input.value);
+
+    list.innerHTML = '';
+
+    if (matches.length === 0) {
+      list.classList.remove('visible');
+      return;
+    }
+
+    matches.forEach(station => {
+
+      const li = document.createElement('li');
+      li.textContent = station.name;
+
+      li.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        input.value = station.name;
+        list.innerHTML = '';
+        list.classList.remove('visible');
+        input.dispatchEvent(new Event('change'));
+      });
+
+      list.appendChild(li);
+    });
+
+    list.classList.add('visible');
+  });
+
+  input.addEventListener('blur', () => {
+    // léger délai pour laisser le clic sur une suggestion s'exécuter
+    setTimeout(() => list.classList.remove('visible'), 100);
+  });
+
+  input.addEventListener('focus', () => {
+
+    if (input.value.trim().length >= 3) {
+      input.dispatchEvent(new Event('input'));
+    }
+  });
+}
+
 function create(seed) {
 
   errors = 0;
@@ -153,11 +227,14 @@ function create(seed) {
 
       h += `
         <td>
-          <input
-            data-r="${r}"
-            data-c="${c}"
-            autocomplete="off"
-          >
+          <div class="autocomplete-wrapper">
+            <input
+              data-r="${r}"
+              data-c="${c}"
+              autocomplete="off"
+            >
+            <ul class="suggestions"></ul>
+          </div>
         </td>
       `;
 
@@ -182,6 +259,8 @@ function create(seed) {
         'change',
         () => validateInput(input)
       );
+
+      setupAutocomplete(input);
 
     });
 }
@@ -224,6 +303,13 @@ function validateInput(input) {
 
     input.disabled = true;
 
+    // on cache et supprime la liste de suggestions une fois validé
+    const list = input.parentElement.querySelector('.suggestions');
+    if (list) {
+      list.innerHTML = '';
+      list.classList.remove('visible');
+    }
+
   } else {
 
     input.classList.remove('ok');
@@ -242,6 +328,12 @@ function validateInput(input) {
         .querySelectorAll('#grid input')
         .forEach(i => {
           i.disabled = true;
+
+          const list = i.parentElement.querySelector('.suggestions');
+          if (list) {
+            list.innerHTML = '';
+            list.classList.remove('visible');
+          }
         });
 
       document.getElementById('result').textContent =
