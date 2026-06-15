@@ -199,6 +199,60 @@ function setupAutocomplete(input) {
   });
 }
 
+// --- Révélation des solutions en fin de partie ---
+
+function revealAllSolutions() {
+
+  document.querySelectorAll('#grid td').forEach(td => {
+
+    const input = td.querySelector('input');
+
+    const row = input.dataset.r;
+    const col = input.dataset.c;
+
+    // on nettoie une éventuelle liste de suggestions encore ouverte
+    const suggestions = td.querySelector('.suggestions');
+
+    if (suggestions) {
+      suggestions.innerHTML = '';
+      suggestions.classList.remove('visible');
+    }
+
+    // toutes les stations correspondant à la ligne ET à la colonne
+    const candidates = STATIONS
+      .filter(
+        station =>
+          station.props[row] &&
+          station.props[col]
+      )
+      .sort((a, b) => a.name.localeCompare(b.name, 'fr'));
+
+    const usedAnswer = window.currentSolution[`${row}|${col}`];
+
+    let solDiv = td.querySelector('.solutions');
+
+    if (!solDiv) {
+      solDiv = document.createElement('div');
+      solDiv.className = 'solutions';
+      td.appendChild(solDiv);
+    }
+
+    solDiv.innerHTML = candidates
+      .map(station => {
+
+        const highlight =
+          station.name === usedAnswer
+            ? ' class="solution-used"'
+            : '';
+
+        return `<span${highlight}>${station.name}</span>`;
+      })
+      .join(', ');
+
+    solDiv.classList.add('visible');
+  });
+}
+
 function create(seed) {
 
   errors = 0;
@@ -303,7 +357,6 @@ function validateInput(input) {
 
     input.disabled = true;
 
-    // on cache et supprime la liste de suggestions une fois validé
     const list = input.parentElement.querySelector('.suggestions');
     if (list) {
       list.innerHTML = '';
@@ -339,6 +392,8 @@ function validateInput(input) {
       document.getElementById('result').textContent =
         '💀 Game Over (3 erreurs)';
 
+      revealAllSolutions();
+
       return;
     }
   }
@@ -363,6 +418,8 @@ function checkVictory() {
 
     document.getElementById('result').textContent =
       '🎉 Bravo ! Métrodoku complété';
+
+    revealAllSolutions();
   }
 }
 
