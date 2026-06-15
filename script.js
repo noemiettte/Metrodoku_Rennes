@@ -2,7 +2,7 @@
 const categories=Object.keys(STATIONS[0].props);
 
 let errorCount=0;
-const MAX-ERRORS=3;
+const MAX_ERRORS=3;
 let gameOver=false;
 
 function seededRandom(seed){let x=Math.sin(seed)*10000;return x-Math.floor(x);}
