@@ -122,6 +122,10 @@ function create(seed){
  setupAutocomplete();
 }
 
+function triggerGameOver() {
+  gameOver = true;
+  alert("3 erreurs atteintes !");
+}
 function validateInput(input){
  if(gameOver) return;
  const name=input.value.trim().toLowerCase();
@@ -137,13 +141,13 @@ function validateInput(input){
   station.props[input.dataset.c] &&
   Array.from(document.querySelectorAll("input"))
    .filter(i=>i!==input)
-   .every(i=>i.value.trim().toLowerCase()!==name));
+   .every(i=>i.value.trim().toLowerCase()!==name);
  if (ok){
   input.className="ok";
   input.dataset.errorCounted="false";
  } else{
   input.className="bad";
-  if (input.dataset.errorCounted === "false") {
+  if (input.dataset.errorCounted !== "true") {
       errorCount++;
       input.dataset.errorCounted = "true";
       updateErrorsUI();
