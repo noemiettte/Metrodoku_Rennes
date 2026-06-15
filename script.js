@@ -65,7 +65,7 @@ function generateValidGrid(seed){
    const rows=shuffle(categories, seed+attempts).slice(0,3);
    const remainingCategories=categories.filter(c=>!rows.includes(c));
    const cols=shuffle(remainingCategories, seed+1000+attempts).slice(0,3);
-   if (remainingCategories.length<3) {throw new Error("Il faut au moins 6 catégories différentes dans data.js");}
+   if (remainingCategories.length <3) {throw new Error("Il faut au moins 6 catégories différentes dans data.js");}
 
    const solution=findSolution(rows, cols);
 
