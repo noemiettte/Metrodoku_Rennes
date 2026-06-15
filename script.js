@@ -96,7 +96,16 @@ function create(seed){
    h+=`<tr><th>${r}</th>`;
 
    cols.forEach(c=>{
-     h+=`<td><input data-r="${r}" data-c="${c}"></td>`;
+     h+=`
+     <td class="cell">
+      <input
+        class="station-input"
+        data-r="${r}"
+        data-c="${c}"
+        autocomplete="off"
+      >
+      <div class="suggestions"></div>
+     </td`;
    });
 
    h+='</tr>';
@@ -148,3 +157,48 @@ document.getElementById('shareBtn').onclick=()=>{
 };
 
 create(dailySeed());
+
+function setupAutocomplete() {
+  document
+        .querySelectorAll(".station-input")
+        .forEach(input => {
+
+            const suggestions =
+                input.parentElement.querySelector(
+                    ".suggestions"
+                );
+
+            input.addEventListener("input", () => {
+
+                const value =
+                    input.value.trim().toLowerCase();
+
+                suggestions.innerHTML = "";
+
+                if (value.length < 3)
+                    return;
+
+                const matches = STATIONS
+                    .filter(st =>
+                        st.name.toLowerCase().startsWith(value)
+                    )
+                    .slice(0, 10);
+
+                matches.forEach(station => {
+
+                    const item =
+                        document.createElement("div");
+
+                    item.className = "suggestion-item";
+                    item.textContent = station.name;
+
+                    item.onclick = () => {
+                        input.value = station.name;
+                        suggestions.innerHTML = "";
+                    };
+
+                    suggestions.appendChild(item);
+                });
+            });
+        });
+}
