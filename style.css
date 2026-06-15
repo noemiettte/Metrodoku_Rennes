@@ -28,28 +28,40 @@ button{padding:10px 14px;cursor:pointer}
         0 0 0 3px #43c26b
         0 4px 16px rgba(0,0,0,.12)
 }
-.suggestions{
-    position:absolute;
-    top:100%;
-    left:0;
-    right:0;
-    background:white;
-    border:1px solid #ccc;
-    border-top:none;
-    z-index:1000;
-    max-height:250px;
-    overflow-y:auto;
-    box-shadow:0 2px 8px rgba(0,0,0,0.15);
+
+.autocomplete-wrapper {
+  position: relative;
 }
-.suggestion-item{padding:8px 10px;cursor:pointer;}
-.suggestion-item:hover{background:#f0f0f0;}
-:root{
-    --purple:#5c2d91;
-    --purple-dark:#44206d;
-    --green:#43c26b;
-    --green-dark:#31a758;
-    --background:#f6f7fb;
+
+.suggestions {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: white;
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
 }
+
+.suggestions.visible {
+  display: block;
+}
+
+.suggestions li {
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.suggestions li:hover {
+  background: #eee;
+}
+
 body{background:var(purple);}
 #grid{display:flex;justify-content:center;margin-top:20px;}
 button{
