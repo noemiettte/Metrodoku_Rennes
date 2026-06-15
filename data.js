@@ -113,7 +113,7 @@ const STATIONS = [
   },
   {
     "name": "Sainte-Anne",
-    "line": "A",
+    "lines": ["A","B"],
     "props": {
       "Correspondance avec un Chronosbus": false,
       "Terminus d'une ligne de Métro ou d'un Chronobus ": false,
@@ -197,7 +197,7 @@ const STATIONS = [
   },
   {
     "name": "Gares",
-    "line": "A",
+    "lines": ["A","B"],
     "props": {
       "Correspondance avec un Chronosbus": true,
       "Terminus d'une ligne de Métro ou d'un Chronobus ": false,
@@ -616,34 +616,6 @@ const STATIONS = [
     }
   },
   {
-    "name": "Sainte-Anne",
-    "line": "B",
-    "props": {
-      "Correspondance avec un Chronosbus": false,
-      "Terminus d'une ligne de Métro ou d'un Chronobus ": false,
-      "Station aérienne": false,
-      "Station au sud de la Vilaine": false,
-      "Station au nord de la Vilaine": true,
-      "Station hors Rennes": false,
-      "Station à Rennes": true,
-      "Nom composé d'une personne": true,
-      "Fait partie du top 10 des stations les plus fréquentées": true,
-      "Commence par une voyelle": false,
-      "Ne contient pas la lettre A": false,
-      "Ne contient pas la lettre E": false,
-      "Ne contient pas la lettre I": false,
-      "Contient la lettre Y": false,
-      "Contient des lettres doublées": true,
-      "Nom commençant par la lettre L": false,
-      "Nom en un seul mot": false,
-      "Correspondancevec un parking relais": false,
-      "Moins d'1km d'un campus universitaire": true,
-      "Moins d'1km d'un centre commercial": true,
-      "Moins d'1km d'un hôpital public": false,
-      "Moins d'1km d'un parc / jardin": true
-    }
-  },
-  {
     "name": "Saint-Germain",
     "line": "B",
     "props": {
@@ -669,34 +641,6 @@ const STATIONS = [
       "Moins d'1km d'un centre commercial": true,
       "Moins d'1km d'un hôpital public": false,
       "Moins d'1km d'un parc / jardin": true
-    }
-  },
-  {
-    "name": "Gares",
-    "line": "B",
-    "props": {
-      "Correspondance avec un Chronosbus": true,
-      "Terminus d'une ligne de Métro ou d'un Chronobus ": false,
-      "Station aérienne": false,
-      "Station au sud de la Vilaine": true,
-      "Station au nord de la Vilaine": false,
-      "Station hors Rennes": false,
-      "Station à Rennes": true,
-      "Nom composé d'une personne": false,
-      "Fait partie du top 10 des stations les plus fréquentées": true,
-      "Commence par une voyelle": false,
-      "Ne contient pas la lettre A": false,
-      "Ne contient pas la lettre E": false,
-      "Ne contient pas la lettre I": true,
-      "Contient la lettre Y": false,
-      "Contient des lettres doublées": false,
-      "Nom commençant par la lettre L": false,
-      "Nom en un seul mot": true,
-      "Correspondancevec un parking relais": false,
-      "Moins d'1km d'un campus universitaire": false,
-      "Moins d'1km d'un centre commercial": true,
-      "Moins d'1km d'un hôpital public": false,
-      "Moins d'1km d'un parc / jardin": false
     }
   },
   {
