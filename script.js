@@ -158,7 +158,6 @@ function create(seed) {
             data-c="${c}"
             autocomplete="off"
           >
-          <div class="suggestions"></div>
         </td>
       `;
 
@@ -170,97 +169,19 @@ function create(seed) {
 
   h += '</table>';
 
-  document
-  .querySelectorAll('#grid input')
-  .forEach(input => {
-
-    input.addEventListener(
-      'input',
-      () => showSuggestions(input)
-    );
-
-    input.addEventListener(
-      'blur',
-      () => {
-
-        setTimeout(() => {
-
-          const list =
-            input.parentElement.querySelector(
-              '.suggestions'
-            );
-
-          list.style.display = 'none';
-
-        }, 200);
-
-      }
-    );
-
-    input.addEventListener(
-      'change',
-      () => validateInput(input)
-    );
-
-  });
+  document.getElementById('grid').innerHTML = h;
 
   document.getElementById('result').textContent =
     `Erreurs : 0/${MAX_ERRORS}`;
-  document.getElementById('grid').innerHTML=h;
-}
 
-function showSuggestions(input){
+  document
+    .querySelectorAll('#grid input')
+    .forEach(input => {
 
-  const value = input.value
-    .trim()
-    .toLowerCase();
-
-  const container =
-    input.parentElement.querySelector('.suggestions');
-
-  if(value.length < 3){
-
-    container.innerHTML = '';
-    container.style.display = 'none';
-    return;
-  }
-
-  const matches = STATIONS
-    .filter(st =>
-      st.name
-        .toLowerCase()
-        .includes(value)
-    )
-    .slice(0,8);
-
-  if(matches.length === 0){
-
-    container.innerHTML = '';
-    container.style.display = 'none';
-    return;
-  }
-
-  container.innerHTML = matches
-    .map(st =>
-      `<div class="suggestion">${st.name}</div>`
-    )
-    .join('');
-
-  container.style.display = 'block';
-
-  container
-    .querySelectorAll('.suggestion')
-    .forEach(div => {
-
-      div.onclick = () => {
-
-        input.value = div.textContent;
-
-        container.innerHTML = '';
-        container.style.display = 'none';
-
-        validateInput(input);
-      };
+      input.addEventListener(
+        'change',
+        () => validateInput(input)
+      );
 
     });
 }
