@@ -103,9 +103,22 @@ function generateValidGrid(seed) {
       shuffle(categories, seed + attempts)
       .slice(0, 3);
 
+    const remainingCategories =
+      categories.filter(
+        category => !rows.includes(category)
+      );
+
+    if (remainingCategories.length < 3) {
+      throw new Error(
+        "Il faut au moins 6 catégories différentes"
+      );
+    }
+
     const cols =
-      shuffle(categories, seed + 1000 + attempts)
-      .slice(0, 3);
+      shuffle(
+        remainingCategories,
+        seed + 1000 + attempts
+      ).slice(0, 3);
 
     const solution = findSolution(rows, cols);
 
