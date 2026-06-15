@@ -62,6 +62,14 @@ button{padding:10px 14px;cursor:pointer}
   background: #eee;
 }
 
+:root{
+    --purple:#5c2d91;
+    --purple-dark:#44206d;
+    --green:#43c26b;
+    --green-dark:#31a758;
+    --background:#f6f7fb;
+}
+
 body{background:var(purple);}
 #grid{display:flex;justify-content:center;margin-top:20px;}
 button{
