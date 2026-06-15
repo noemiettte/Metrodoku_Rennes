@@ -44,7 +44,7 @@ button{padding:10px 14px;cursor:pointer}
 .suggestion-item{padding:8px 10px;cursor:pointer;}
 .suggestion-item:hover{background:#f0f0f0;}
 :root{
-    --purple:##5c2d91;
+    --purple:#c0a3e8;
     --purple-dark:#44206d;
     --green:#43c26b;
     --green-dark:#31a758;
@@ -56,7 +56,7 @@ button{
     border:none;
     border-radius:12px;
     background:var(--purple);
-    color:white;
+    color:black;
     padding:12px 18px;
     font-weight:600;
     cursor:pointer;
