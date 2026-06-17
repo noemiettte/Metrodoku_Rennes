@@ -1,87 +1,211 @@
-
-body{font-family:system-ui,sans-serif;background:#f5f5f5;margin:0}
-.container{max-width:1100px;margin:auto;padding:20px}
-table{border-collapse:separate;border-spacing:12px;background:transparent}
-th{width:120px;height:80px;border-radius:16px;background:#5c2d91;color:white;border:none;front-size:14px;front-weight:600}
-td{width:120px;height:120px;padding:0;border:none}
-input{width:100%;box-sizing:border-box;padding:8px}
-.ok{background:#d4edda}.bad{background:#f8d7da}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}
-button{padding:10px 14px;cursor:pointer}
-#result{margin-top:15px;font-weight:bold}
-.cell{position:relative;width:120px;height:120px}
-.station.input{
-    width:100%;
-    height:100%;
-    border:none;
-    border-radius:16px;
-    text-align:center;
-    front-size:16px;
-    background:white;
-    box-shadow:
-        0 2px 8px rgba(0,0,0,.08);
-    transition:.2s
-}
-.station-input:focus{
-    outline:none;
-    box-shadow:
-        0 0 0 3px #43c26b
-        0 4px 16px rgba(0,0,0,.12)
+/* ============================================================
+   Variables
+   ============================================================ */
+:root {
+  --purple:      #5c2d91;
+  --purple-dark: #44206d;
+  --green:       #43c26b;
+  --green-dark:  #31a758;
+  --red:         #e05252;
+  --bg:          #f6f7fb;
+  --radius:      16px;
+  --shadow:      0 2px 10px rgba(0,0,0,.10);
 }
 
+/* ============================================================
+   Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: system-ui, sans-serif;
+  background: var(--bg);
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 24px 16px;
+}
+
+h1 {
+  color: var(--purple);
+  margin-bottom: 6px;
+}
+
+/* ============================================================
+   Toolbar
+   ============================================================ */
+.toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+button {
+  border: none;
+  border-radius: 12px;
+  background: var(--purple);
+  color: white;
+  padding: 11px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+button:hover { background: var(--purple-dark); }
+
+/* ============================================================
+   Grille
+   ============================================================ */
+#grid {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 10px;
+  background: transparent;
+}
+
+/* En-têtes */
+th {
+  width: 140px;
+  min-height: 70px;
+  padding: 10px 8px;
+  border-radius: var(--radius);
+  background: var(--purple);
+  color: white;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.3;
+}
+
+th:first-child { background: transparent; }
+
+/* Cellules */
+td {
+  width: 140px;
+  padding: 0;
+  border: none;
+  vertical-align: top;
+}
+
+/* ============================================================
+   Wrapper autocomplétion
+   ============================================================ */
 .autocomplete-wrapper {
   position: relative;
+  width: 100%;
 }
 
+/* ============================================================
+   Champ de saisie
+   ============================================================ */
+input {
+  display: block;
+  width: 100%;
+  height: 80px;
+  padding: 8px 10px;
+  border: 2px solid #ddd;
+  border-radius: var(--radius);
+  font-size: 13px;
+  text-align: center;
+  background: white;
+  box-shadow: var(--shadow);
+  transition: border-color .15s, background .15s;
+  cursor: text;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(92,45,145,.18);
+}
+
+input.ok {
+  background: #d9f5e2;
+  border-color: var(--green);
+  color: #1a6b38;
+  font-weight: 600;
+}
+
+input.bad {
+  background: #ffe1e1;
+  border-color: var(--red);
+}
+
+/* ============================================================
+   Liste de suggestions
+   ============================================================ */
 .suggestions {
   display: none;
   position: absolute;
-  top: 100%;
+  top: calc(100% + 2px);
   left: 0;
   right: 0;
-  z-index: 10;
+  z-index: 100;
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 4px 0;
   background: white;
-  border: 1px solid #ccc;
-  max-height: 150px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.12);
+  max-height: 160px;
   overflow-y: auto;
 }
 
-.suggestions.visible {
-  display: block;
-}
+.suggestions.visible { display: block; }
 
 .suggestions li {
-  padding: 4px 8px;
+  padding: 7px 12px;
+  font-size: 13px;
   cursor: pointer;
+  transition: background .1s;
 }
 
-.suggestions li:hover {
-  background: #eee;
+.suggestions li:hover { background: #f0e8fa; }
+
+/* ============================================================
+   Révélation des solutions
+   ============================================================ */
+.solutions {
+  display: none;
+  margin-top: 6px;
+  font-size: 11px;
+  color: #555;
+  line-height: 1.5;
+  padding: 6px 8px;
+  background: #f0e8fa;
+  border-radius: 10px;
 }
 
-:root{
-    --purple:#5c2d91;
-    --purple-dark:#44206d;
-    --green:#43c26b;
-    --green-dark:#31a758;
-    --background:#f6f7fb;
+.solutions.visible { display: block; }
+
+/* Station retenue par l'algorithme */
+.solutions .solution-used {
+  font-weight: 700;
+  color: var(--purple);
 }
 
-body{background:var(purple);}
-#grid{display:flex;justify-content:center;margin-top:20px;}
-button{
-    border:none;
-    border-radius:12px;
-    background:var(--purple);
-    color:white;
-    padding:12px 18px;
-    font-weight:600;
-    cursor:pointer;
-    transition:.2s
+/* ============================================================
+   Résultat
+   ============================================================ */
+#result {
+  margin-top: 18px;
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--purple);
+  min-height: 24px;
 }
-button:hover{background:var(--purple-dark)}
-.ok{background:#d9f5e2 !important}
-.bad{background:#ffe1e1 !important}
