@@ -91,7 +91,11 @@ th {
   line-height: 1.3;
 }
 
-th:first-child { background: transparent; }
+/* Cellule vide coin haut-gauche : transparente */
+tr:first-child th:first-child { background: transparent; }
+
+/* En-têtes de ligne (1ère colonne des lignes de données) : violet comme les colonnes */
+tr:not(:first-child) th { background: var(--purple); }
 
 /* Cellules */
 td {
