@@ -24,7 +24,7 @@ function shuffle(arr, seed) {
 
 /**
  * Graine basée sur la date locale : change chaque jour à minuit.
- * Format : YYYYMMDD (ex. 20260617) → nombre stable toute la journée.
+ * Format : YYYYMMDD (ex. 20260617) -> nombre stable toute la journée.
  */
 function dailySeed() {
   const d = new Date();
@@ -38,39 +38,43 @@ function dailySeed() {
 // Résolution par backtracking
 // ---------------------------------------------------------------------------
 
-function findSolution(rows, cols) {
+/**
+ * Construit la liste triée des cases et leurs candidats bruts.
+ * Réutilisée par findSolution et countSolutionsPerCell.
+ */
+function buildCells(rows, cols) {
   const cells = [];
-
   rows.forEach(row => {
     cols.forEach(col => {
       cells.push({
         row,
         col,
-        candidates: STATIONS.filter(
-          s => s.props[row] && s.props[col]
-        )
+        candidates: STATIONS.filter(s => s.props[row] && s.props[col])
       });
     });
   });
-
-  // On commence par les cases avec le moins de candidats (plus rapide)
+  // Cases avec peu de candidats en premier -> backtracking plus rapide
   cells.sort((a, b) => a.candidates.length - b.candidates.length);
+  return cells;
+}
 
+/**
+ * Trouve UNE solution complète (backtracking classique).
+ * Retourne un objet { "row|col": stationName } ou null.
+ */
+function findSolution(rows, cols) {
+  const cells    = buildCells(rows, cols);
   const used     = new Set();
   const solution = {};
 
   function backtrack(index) {
     if (index === cells.length) return true;
-
     const cell = cells[index];
     for (const station of cell.candidates) {
       if (used.has(station.name)) continue;
-
       used.add(station.name);
       solution[`${cell.row}|${cell.col}`] = station.name;
-
       if (backtrack(index + 1)) return true;
-
       used.delete(station.name);
       delete solution[`${cell.row}|${cell.col}`];
     }
@@ -80,16 +84,57 @@ function findSolution(rows, cols) {
   return backtrack(0) ? solution : null;
 }
 
+/**
+ * Enumère toutes les solutions complètes (jusqu'à maxTotal) et retourne,
+ * pour chaque case, le Set des noms de stations qui y apparaissent dans
+ * au moins une solution complète.
+ * Garantit ainsi qu'une station comptée est vraiment jouable sans bloquer
+ * les autres cases.
+ */
+function countSolutionsPerCell(rows, cols, maxTotal) {
+  const cells   = buildCells(rows, cols);
+  const used    = new Set();
+  const current = {};
+  const perCell = new Map(cells.map(c => [`${c.row}|${c.col}`, new Set()]));
+  let   total   = 0;
+
+  function backtrack(index) {
+    if (index === cells.length) {
+      for (const key of perCell.keys()) {
+        perCell.get(key).add(current[key]);
+      }
+      total++;
+      return total >= maxTotal;
+    }
+    const cell = cells[index];
+    for (const station of cell.candidates) {
+      if (used.has(station.name)) continue;
+      used.add(station.name);
+      current[`${cell.row}|${cell.col}`] = station.name;
+      if (backtrack(index + 1)) return true;
+      used.delete(station.name);
+      delete current[`${cell.row}|${cell.col}`];
+    }
+    return false;
+  }
+
+  backtrack(0);
+  return perCell;
+}
+
 // ---------------------------------------------------------------------------
 // Génération de la grille
 // ---------------------------------------------------------------------------
+
+/** Nombre minimum de solutions complètes distinctes exigé pour chaque case. */
+const MIN_OPTIONS_PER_CELL = 2;
 
 function generateValidGrid(seed) {
   let attempts = 0;
 
   while (attempts < 500) {
     // Les catégories de lignes et de colonnes doivent être DISTINCTES
-    const rows = shuffle(categories, seed + attempts).slice(0, 3);
+    const rows      = shuffle(categories, seed + attempts).slice(0, 3);
     const remaining = categories.filter(c => !rows.includes(c));
 
     if (remaining.length < 3) {
@@ -97,13 +142,24 @@ function generateValidGrid(seed) {
     }
 
     const cols     = shuffle(remaining, seed + 1000 + attempts).slice(0, 3);
-    const solution = findSolution(rows, cols);
 
-    if (solution) return { rows, cols, solution };
+    // 1. Vérifier qu'il existe au moins une solution
+    const solution = findSolution(rows, cols);
+    if (!solution) { attempts++; continue; }
+
+    // 2. Vérifier que chaque case offre au moins MIN_OPTIONS_PER_CELL
+    //    stations jouables dans au moins une solution complète.
+    //    On explore jusqu'à MIN_OPTIONS_PER_CELL*9 solutions pour être sûr.
+    const perCell = countSolutionsPerCell(rows, cols, MIN_OPTIONS_PER_CELL * 9);
+    const allOk   = [...perCell.values()].every(
+      set => set.size >= MIN_OPTIONS_PER_CELL
+    );
+
+    if (allOk) return { rows, cols, solution };
     attempts++;
   }
 
-  throw new Error('Impossible de générer une grille valide');
+  throw new Error('Impossible de générer une grille valide avec au moins 2 options par case');
 }
 
 // ---------------------------------------------------------------------------
@@ -219,7 +275,7 @@ function revealAllSolutions() {
 // ---------------------------------------------------------------------------
 
 function create(seed) {
-  errors  = 0;
+  errors   = 0;
   gameOver = false;
 
   const puzzle = generateValidGrid(seed);
@@ -237,7 +293,7 @@ function create(seed) {
       h += `
         <td>
           <div class="autocomplete-wrapper">
-            <input data-r="${r}" data-c="${c}" autocomplete="off" placeholder="Station…">
+            <input data-r="${r}" data-c="${c}" autocomplete="off" placeholder="Station...">
             <ul class="suggestions"></ul>
           </div>
         </td>`;
@@ -247,7 +303,7 @@ function create(seed) {
 
   h += '</table>';
 
-  document.getElementById('grid').innerHTML   = h;
+  document.getElementById('grid').innerHTML    = h;
   document.getElementById('result').textContent = `Erreurs : 0 / ${MAX_ERRORS}`;
 
   document.querySelectorAll('#grid input').forEach(input => {
